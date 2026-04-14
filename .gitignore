@@ -1,0 +1,13 @@
+# Archivos y directorios a ignorar en el repositorio
+
+# Credenciales de Google Cloud
+gcp-service-account.json
+
+# Datos scrapeados
+ogilvy-scraped-data.json
+
+# Logs
+*.log
+
+# Dependencias de Node.js (si se instalaran localmente)
+node_modules/

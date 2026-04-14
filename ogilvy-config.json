@@ -1,0 +1,43 @@
+{
+  "sitesToMonitor": [
+    "https://www.theverge.com/",
+    "https://arstechnica.com/",
+    "https://techcrunch.com/",
+    "https://technologyreview.com/",
+    "https://www.wired.com/",
+    "https://www.xataka.com/",
+    "https://www.apple.com/news/",
+    "https://blog.google/products/google-store/",
+    "https://www.tesla.com/blog",
+    "https://www.anthropic.com/news",
+    "https://vercel.com/changelog",
+    "https://github.blog/",
+    "https://stripe.com/blog",
+    "https://linear.app/changelog",
+    "https://www.semrush.com/blog/",
+    "https://www.producthunt.com/",
+    "https://news.ycombinator.com/",
+    "https://stackoverflow.blog/",
+    "https://www.freecodecamp.org/news/",
+    "https://www.awwwards.com/blog/",
+    "https://framer.com/changelog"
+  ],
+  "numberOfHeadlinesToSelect": 10,
+  "keywords": [
+    "IA",
+    "Inteligencia Artificial",
+    "Marketing",
+    "Digital",
+    "Tecnología",
+    "Tendencias",
+    "B2B",
+    "eCommerce",
+    "Automatización",
+    "Desarrollo",
+    "Productividad",
+    "Cloud",
+    "Privacidad",
+    "Ética",
+    "Seguridad"
+  ]
+}

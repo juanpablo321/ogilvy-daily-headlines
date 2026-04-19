@@ -1,17 +1,12 @@
-const { google } = require('googleapis');
 const fs = require('fs');
+const path = require('path');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+const DIR = path.dirname(__filename);
+
 async function runOgilvyDailyTask() {
-  const credentials = JSON.parse(fs.readFileSync('/home/smith/.openclaw/workspace/gcp-service-account.json', 'utf8'));
-
-  const auth = new google.auth.GoogleAuth({
-    credentials,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'],
-  });
-
-  const config = JSON.parse(fs.readFileSync('/home/smith/.openclaw/workspace/proyectos/proyectos-franco/ogilvy-daily-headlines/ogilvy-config.json', 'utf8'));
+  const config = JSON.parse(fs.readFileSync(path.join(DIR, 'ogilvy-config.json'), 'utf8'));
 
   let scrapedContent = [];
   let excludedSites = [];
@@ -172,16 +167,27 @@ async function runOgilvyDailyTask() {
       const html = response.data;
       const $ = cheerio.load(html);
 
+      // Deduplicar URLs dentro de cada sitio para evitar el mismo artículo
+      // listado múltiples veces en distintas secciones de la misma página
+      const seenLinksThisSite = new Set();
+
       // Solo h1, h2, h3 — los párrafos generan demasiado ruido en listings
       $('h1, h2, h3').each((i, elem) => {
         const text = $(elem).text().trim();
 
-        // Buscar link: en el heading mismo, en un <a> padre, o en el artículo contenedor
+        // Buscar link: en el heading mismo → padre <a> → contenedor artículo → hermanos del contenedor
+        // El último paso resuelve sitios como HBR donde el <a> es hermano del <h2> en un stream-item
+        const container = $(elem).closest(
+          'article, [class*="stream-item"], [class*="post"], [class*="item"], [class*="card"], [class*="entry"]'
+        );
+
         let link =
           $(elem).find('a[href]').first().attr('href') ||
           $(elem).closest('a[href]').attr('href') ||
-          $(elem).closest('article, [class*="post"], [class*="item"], [class*="card"]').find('a[href]').first().attr('href');
+          container.find('a[href]').first().attr('href') ||
+          $(elem).siblings('a[href]').first().attr('href');
 
+        // Filtrar links que sean navegación genérica (sin path significativo)
         if (link && link !== '#' && !link.startsWith('http')) {
           try {
             link = new URL(link, siteUrl).href;
@@ -190,6 +196,10 @@ async function runOgilvyDailyTask() {
           }
         }
         if (!link || link === '#') link = null;
+
+        // Descartar si la URL ya fue vista en este sitio (evita duplicados por múltiples secciones)
+        if (link && seenLinksThisSite.has(link)) return;
+        if (link) seenLinksThisSite.add(link);
 
         const matchedKeywords = config.keywords.filter(keyword =>
           text.toLowerCase().includes(keyword.toLowerCase())
@@ -253,7 +263,7 @@ async function runOgilvyDailyTask() {
   const withDate = scrapedContent.filter(a => a.publishDate !== 'N/A').length;
 
   fs.writeFileSync(
-    '/home/smith/.openclaw/workspace/proyectos/proyectos-franco/ogilvy-daily-headlines/ogilvy-scraped-data.json',
+    path.join(DIR, 'ogilvy-scraped-data.json'),
     JSON.stringify({ scrapedContent, excludedSites }, null, 2),
     'utf8'
   );

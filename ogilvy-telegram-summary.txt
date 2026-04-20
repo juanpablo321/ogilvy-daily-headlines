@@ -1,0 +1,33 @@
+📰 *Ogilvy Daily Headlines – 2026-04-16*
+
+Top 10 titulares seleccionados:
+
+1. *Enable Copilot cloud agent via custom properties*
+🔗 https://github.blog/changelog/2026-04-15-enable-copilot-cloud-agent-via-custom-properties
+
+2. *Han puesto a los 21 chatbots de IA más populares a realizar diagnóstico diferencial. Fallan más que una escopeta de feria*
+🔗 https://www.xataka.com/medicina-y-salud/han-puesto-a-21-chatbots-ia-populares-a-realizar-diagnostico-diferencial-fallan-que-escopeta-feria
+
+3. *Los océanos están echando humo y la mala noticia es que esa frase está empezando a dejar de ser una metáfora*
+🔗 https://www.xataka.com/ecologia-y-naturaleza/oceanos-estan-echando-humo-mala-noticia-que-esa-frase-esta-empezando-a-dejar-ser-metafora
+
+4. *China casi ha cerrado la brecha de IA con Estados Unidos. Y lo ha hecho con todos los palos en las ruedas*
+🔗 https://www.xataka.com/robotica-e-ia/china-casi-ha-cerrado-brecha-ia-estados-unidos-ha-hecho-todos-palos-ruedas
+
+5. *Octoverse 2025: AI, India, and the new #1 programming language*
+🔗 https://github.blog/ai-and-ml/
+
+6. *Google rolls out worldwide agentic restaurant booking via AI Mode*
+🔗 https://www.semrush.com/blog/ai-mode-agentic-restaurant-booking/
+
+7. *Developer policy update: Intermediary liability, copyright, and transparency*
+🔗 https://github.blog/news-insights/policy-news-and-insights/developer-policy-update-intermediary-liability-copyright-and-transparency/
+
+8. *Anthropic Opposes the Extreme AI Liability Bill That OpenAI Backed*
+🔗 https://www.wired.com/story/anthropic-opposes-the-extreme-ai-liability-bill-that-openai-backed/
+
+9. *Adobe takes Creative Cloud into Claude Code-esque territory*
+🔗 https://arstechnica.com/ai/2026/04/adobe-takes-creative-cloud-into-claude-code-esque-territory/
+
+10. *Hiring during hypergrowth with Isaiah Granet, Bland*
+🔗 https://techcrunch.com/video/hiring-during-hypergrowth-with-isaiah-granet-bland/

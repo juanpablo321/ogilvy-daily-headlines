@@ -1,12 +1,14 @@
 # Sistema Ogilvy Daily Headlines — Documentación Técnica
 
-> Última actualización: 2026-04-19
+> Última actualización: 2026-04-24
 
 ---
 
 ## ¿Qué hace el sistema?
 
-Todos los días (martes a sábado) el sistema rastrea automáticamente 22 sitios de tecnología y marketing, extrae los titulares más relevantes, los filtra y puntúa con IA, y publica los 10 mejores en un Google Sheet con sus metadatos. Además, envía un resumen directo por Telegram.
+Actualmente el sistema rastrea automáticamente 22 sitios de tecnología, marketing, IA y negocios digitales, extrae titulares potencialmente relevantes, los filtra por keywords, los puntúa y publica una selección editorial en Google Sheets. La configuración objetivo quedó en 5 titulares por ejecución.
+
+**Nota operativa:** el cron todavía está activo de martes a sábado y el cambio a ejecución semanal los sábados queda pendiente para la Fase 3.
 
 El objetivo: que Juan tenga cada mañana una bandeja de entrada editorial curada, lista para inspirar artículos de blog o posts de LinkedIn.
 
@@ -30,7 +32,7 @@ ogilvy-scraped-data.json    ← Dato intermedio
 ogilvy-write-sheets.js      ← Paso 2: Selección IA + publicación
       │
       ├──► Google Sheets (pestaña "Revision")
-      └──► Telegram (resumen de los 10 titulares)
+      └──► Telegram (resumen de titulares seleccionados)
 ```
 
 ---
@@ -43,11 +45,35 @@ ogilvy-write-sheets.js      ← Paso 2: Selección IA + publicación
 **Datos que almacena:**
 | Campo | Descripción |
 |---|---|
-| `sitesToMonitor` | Lista de 22 URLs de sitios a rastrear (The Verge, Wired, TechCrunch, Anthropic, HBR, etc.) |
-| `numberOfHeadlinesToSelect` | Número de titulares a seleccionar (por defecto: 10) |
+| `sitesToMonitor` | Lista de 22 URLs de sitios a rastrear. Incluye medios tech, fuentes de IA, blogs de producto, marketing, eCommerce y consultoría. |
+| `numberOfHeadlinesToSelect` | Número objetivo de titulares a seleccionar: 5 |
 | `keywords` | Palabras clave de filtro primario: IA, Marketing, eCommerce, B2B, Automatización, etc. |
 
 **Cuándo editarlo:** Para agregar/quitar sitios, cambiar el número de titulares, o ajustar las palabras clave de interés.
+
+**Fuentes activas al 2026-04-24:**
+- The Verge — `https://www.theverge.com/`
+- Ars Technica — `https://arstechnica.com/`
+- TechCrunch — `https://techcrunch.com/`
+- MIT Technology Review — `https://technologyreview.com/`
+- Wired — `https://www.wired.com/`
+- Xataka — `https://www.xataka.com/`
+- Apple News — `https://www.apple.com/news/`
+- Google Blog — `https://blog.google/`
+- Anthropic News — `https://www.anthropic.com/news`
+- Vercel Changelog — `https://vercel.com/changelog`
+- GitHub Blog — `https://github.blog/`
+- Stripe Blog — `https://stripe.com/blog`
+- Linear Changelog — `https://linear.app/changelog`
+- Semrush Blog — `https://www.semrush.com/blog/`
+- Hacker News — `https://news.ycombinator.com/`
+- Stack Overflow Blog — `https://stackoverflow.blog/`
+- freeCodeCamp News — `https://www.freecodecamp.org/news/`
+- Awwwards Blog — `https://www.awwwards.com/blog/`
+- Harvard Business Review — `https://hbr.org/the-latest`
+- Daily Dose of Data Science — `https://blog.dailydoseofds.com/`
+- OpenClaw Blog — `https://www.getopenclaw.ai/blog`
+- McKinsey Featured Insights — `https://www.mckinsey.com/featured-insights`
 
 ---
 
@@ -91,7 +117,7 @@ Este archivo se sobreescribe completamente en cada ejecución. No es un históri
 ---
 
 ### `ogilvy-write-sheets.js` — Paso 2: Selección + Publicación
-**Qué hace:** Lee `ogilvy-scraped-data.json`, aplica un sistema de puntuación para elegir los 10 mejores titulares, los escribe en Google Sheets y envía el resumen a Telegram.
+**Qué hace:** Lee `ogilvy-scraped-data.json`, aplica un sistema de puntuación para elegir titulares relevantes, los escribe en Google Sheets y envía el resumen a Telegram. La configuración objetivo actual es seleccionar 5 titulares.
 
 **Dónde interviene la IA (lógica de scoring):**
 Este es el cerebro editorial del sistema. Cada titular recibe una puntuación basada en:
@@ -152,7 +178,7 @@ Este es el cerebro editorial del sistema. Cada titular recibe una puntuación ba
          │ CRON ejecuta ogilvy-daily-headlines.js              │
          │                                                     │
          │ 1. Lee ogilvy-config.json                           │
-         │ 2. Hace GET a cada uno de los 22 sitios             │
+         │ 2. Hace GET a cada uno de los 22 sitios activos             │
          │ 3. Parsea el HTML con Cheerio                       │
          │ 4. Extrae H1/H2/H3 que tengan keywords             │
          │ 5. Intenta extraer autor, fecha y descripción       │
@@ -168,7 +194,7 @@ Este es el cerebro editorial del sistema. Cada titular recibe una puntuación ba
          │ 3. Filtra titulares inválidos (sin URL, muy cortos) │
          │ 4. Puntúa cada titular (fecha + keywords + autor)   │
          │ 5. Ordena de mayor a menor puntaje                  │
-         │ 6. Selecciona top 10 con diversidad de fuente       │
+         │ 6. Selecciona los titulares finales con diversidad de fuente       │
          │ 7. Infiere el tema de cada titular                  │
          │ 8. Escribe las filas en Google Sheets               │
          │ 9. Arma el resumen de texto para Telegram           │
@@ -196,13 +222,13 @@ Este es el cerebro editorial del sistema. Cada titular recibe una puntuación ba
 
 ## Sitios con problemas conocidos
 
-Los siguientes sitios generan errores 403/4xx frecuentemente y sus titulares no se capturan:
+Los siguientes sitios generaban errores 403/4xx frecuentemente y fueron removidos de `sitesToMonitor` en la actualización del 2026-04-24:
 - `blog.google/products/google-store`
 - `tesla.com/blog`
 - `producthunt.com`
 - `framer.com/changelog`
 
-Sitios que no exponen autor ni fecha en sus listings (quedan como N/A):
+Sitios que suelen no exponer autor ni fecha en sus listings (quedan como N/A):
 - TechCrunch, Ars Technica, MIT Technology Review
 
 ---
@@ -236,3 +262,20 @@ tail -f ogilvy-daily-headlines.log
 | Cambiar pesos del scoring | `ogilvy-write-sheets.js` → función `scoreHeadline()` |
 | Cambiar los temas inferidos | `ogilvy-write-sheets.js` → función `inferTopic()` |
 | Cambiar el formato del resumen de Telegram | `ogilvy-write-sheets.js` → variable `fullSummary` |
+
+
+---
+
+## Pendientes aprobados — Fase 2 y Fase 3
+
+Estos cambios fueron aprobados por Juan, pero deben ejecutarse después con otro modelo. No se implementaron en esta actualización.
+
+### Fase 2 — Calidad editorial, deduplicación y scoring
+- Mejorar deduplicación para evitar titulares repetidos por variaciones de URL, tracking params o textos casi iguales.
+- Rediseñar la lógica de scoring para priorizar artículos profundos y útiles similares a los ejemplos dados por Juan: agentic web, agentic commerce, prompt caching y AI guardrails.
+- Mantener la selección principalmente determinística por scoring y abrir solo una ventana pequeña a un modelo generativo para elegir los 5 mejores entre candidatos prefiltrados.
+- Revisar que `numberOfHeadlinesToSelect` sea respetado por el flujo de selección/publicación.
+
+### Fase 3 — Frecuencia semanal
+- Cambiar el cron de martes a sábado a una sola ejecución semanal los sábados.
+- Actualizar documentación y logs esperados después del cambio.
